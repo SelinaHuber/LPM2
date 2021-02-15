@@ -49,6 +49,9 @@ app.locals.title = `${capitalized(projectName)}- Generated with IronGenerator`;
 const index = require("./routes/index");
 app.use("/", index);
 
+const dashboard = require("./routes/dashboard");
+app.use("/", dashboard);
+
 const auth = require("./routes/auth");
 app.use("/", auth);
 
