@@ -25,19 +25,19 @@ const MongoStore = require('connect-mongo')(session)
 
 const mongoose = require('./db/index');
 
-// app.use(
-//     session({
-//         secret: process.env.SESSION_SECRET,
-//         cookie: { maxAge: 1000 * 60 * 60 * 24 },
-//         saveUninitialized: false,
-//         //Forces the session to be saved back to the session store, 
-//         // even if the session was never modified during the request.
-//         resave: true,
-//         store: new MongoStore({
-//             mongooseConnection: mongoose.connection
-//         })
-//     })
-// )
+app.use(
+    session({
+        secret: process.env.SESS_SECRET,
+        cookie: { maxAge: 1000 * 60 * 60 * 24 },
+        saveUninitialized: false,
+        //Forces the session to be saved back to the session store, 
+        // even if the session was never modified during the request.
+        resave: true,
+        store: new MongoStore({
+            mongooseConnection: mongoose.connection
+        })
+    })
+)
 
 // default value for title local
 const projectName = "LanguageProject";

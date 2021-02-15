@@ -53,6 +53,7 @@ router.post('/login', (req, res) => {
   // check if we have a user with the entered username
   User.findOne({ username: username })
     .then(userFromDB => {
+      console.log('LOGGGG', userFromDB)
       if (userFromDB === null) {
         // if not we show login again
         res.render('login', { message: 'Invalid credentials' });
@@ -63,7 +64,7 @@ router.post('/login', (req, res) => {
         // password and hash match
         // now we want to log the user in
         req.session.user = userFromDB;
-        res.redirect('/index');
+        res.redirect('/dashboard');
       } else {
         res.render('login', { message: 'Invalid credentials' });
       }
@@ -71,5 +72,14 @@ router.post('/login', (req, res) => {
 
 })
 
+router.get('/logout', (req, res) => {
+  req.session.destroy(function (err) {
+    if (err) {
+      console.log(err);
+    } else {
+      res.redirect('/');
+    }
+  })
+})
 
 module.exports = router;
