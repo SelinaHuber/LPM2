@@ -18,7 +18,7 @@ router.get("/word-search", (req, res, next) => {
   const {wordInput} = req.query;
   // const defaultRandomWord = getRandomWord()
   // console.log('REQQQQQQQQQQQQQQ', req.query);
-  axios.get(`https://od-api.oxforddictionaries.com/api/v2/translations/de/en/${wordInput || "Error"}?strictMatch=false`)
+  axios.get(`https://od-api.oxforddictionaries.com/api/v2/translations/en/de/${wordInput || "Error"}?strictMatch=false`)
     .then(def => {
       // console.log('DEFFFFF', def.data.results[0].lexicalEntries[0]);
       // console.log('DEFFFFF', def.data.results[0].lexicalEntries[0].entries[0].senses[0].translations[0].text);
@@ -38,19 +38,60 @@ router.get("/word-search", (req, res, next) => {
 
 //function getRandomWord()
 
-router.post("/addWord", (req, res, next) => {
-  const {searchedWord, translatedWord, engSentence, gerSentence,ipaWord} = req.body;
+const loginCheck = () => {
+  return (req, res, next) => {
+    if (req.session.user) {
+      next();
+    } else {
+      res.redirect('/login');
+    }
+  }
+}
 
-Word.create({searchedWord, translatedWord, engSentence, gerSentence,ipaWord, 
-  //owner: req.session.id
+router.get('/list-words', (req, res) => {
+  // this only shows the rooms that the logged in user created
+  Word.find({ owner: req.session.user._id })
+      .then(savedWords => {
+       res.render('list-words', { words: savedWords })
+      })
+     .catch(err => {
+       console.log(err);
+     })
 })
-  .then((savedWord) => {
-    console.log("saved here!",savedWord)
-    //res.redirect('/list-words')
-  }).catch(err => {
-    next(err);
+
+
+
+router.post("/addWord", loginCheck(), (req, res, next) => {
+  const {searchedWord, translatedWord, engSentence, gerSentence,ipaWord} = req.body;
+  Word.create({searchedWord, translatedWord, engSentence, gerSentence,ipaWord, owner: req.session.user._id
   })
+    .then((savedWord) => {
+      console.log("saved here!",savedWord)
+      res.redirect('/list-words')
+    }).catch(err => {
+      next(err);
+    })
 });
+
+
+
+/* router.post('/', loginCheck(), (req, res) => {
+  const { name, price } = req.body;
+  Word.create({
+    name,
+    price,
+    owner: req.session.user._id
+
+  })
+    .then(room => {
+      console.log(room);
+      res.redirect('/rooms')
+    })
+    .catch(err => {
+      console.log(err);
+    })
+}) */
+
 
 router.get("/list-of-words", (req,res) => {
   Word.find({owner:req.session.id}).then(words => {

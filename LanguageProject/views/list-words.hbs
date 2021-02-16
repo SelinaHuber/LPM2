@@ -1,7 +1,10 @@
-<h1>Your saved Words:</h1> 
+<h1>Your saved words:</h1>
 
 {{#each words}}
-<ul>
- <li>{{}}</li>
-</ul>
+<h3>{{this.searchedWord}}</h3>
+<p>Translation:{{this.translatedWord}}</p>
+{{!-- <p>Example:{{this.gerSentence}}</p> --}}
+<br>
+<br>
 {{/each}}
+
