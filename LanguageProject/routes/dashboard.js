@@ -1,20 +1,23 @@
 const router = require("express").Router();
 const axios = require('axios');
 // const process = require('process');
-require("dotenv/config");
+const Word = require('../models/Word')
+const User = require('../models/User.model')
 
-// const endPoint = 'entries';
-// const wordId = process.argv[2];
-// console.log('LOGGGINGGG', wordId)
+require("dotenv/config");
 
 
 axios.defaults.headers.common["app_id"] = process.env.appId;
 axios.defaults.headers.common["app_key"] = process.env.keyApi;
 
+router.get('/dashboard', (req, res) => {
+  res.render("dashboard");
+})
 
-router.get("/dashboard", (req, res, next) => {
-  // console.log('REQQQQQQQQQQQQQQ');
-  axios.get(`https://od-api.oxforddictionaries.com/api/v2/translations/de/en/katze?strictMatch=false`)
+router.get("/word-search", (req, res, next) => {
+  const {wordInput} = req.query;
+  console.log('REQQQQQQQQQQQQQQ', req.query);
+  axios.get(`https://od-api.oxforddictionaries.com/api/v2/translations/de/en/${wordInput || "pferd"}?strictMatch=false`)
     .then(def => {
       // console.log('DEFFFFF', def.data.results[0].lexicalEntries[0]);
       // console.log('DEFFFFF', def.data.results[0].lexicalEntries[0].entries[0].senses[0].translations[0].text);
@@ -23,12 +26,24 @@ router.get("/dashboard", (req, res, next) => {
       const engSentence = def.data.results[0].lexicalEntries[0].entries[0].senses[0].examples[0].translations[0].text
       const gerSentence = def.data.results[0].lexicalEntries[0].entries[0].senses[0].examples[0].text
       const ipaWord = def.data.results[0].lexicalEntries[0].entries[0].pronunciations[0].phoneticSpelling
-      res.render("dashboard", { searchedWord, translatedWord, gerSentence, engSentence, ipaWord });
+      res.render("search-results", { searchedWord, translatedWord, gerSentence, engSentence, ipaWord, wordInput });
     })
     .catch(err => {
       console.log(err);
     })
 });
+
+// router.get("/dashboard", (req, res) => {
+//   console.log(req.body)
+//   const {wordInput} = req.body;
+//   Word.create({wordInput}).then(()=> {
+//     res.render("/dashboard")
+//   })
+//   .catch(err => {
+//     next(err);
+//   });
+// })
+
 
 module.exports = router;
 
