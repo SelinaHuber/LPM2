@@ -5,10 +5,19 @@
   <button type="submit">Search</button>
 </form> --}}
 
-
+<form action="/addWord" method="POST">
+<input name="searchedWord" value={{searchedWord}} hidden>
 <p>German: {{searchedWord}} </p>
+<input name="translatedWord" value={{translatedWord}} hidden>
 <p>English: {{translatedWord}} </p>
+<input name="gerSentence" value={{gerSentence}} hidden>
 <p>German sentence example: {{gerSentence}} </p>
+<input name="engSentence" value={{engSentence}} hidden>
 <p>English sentence example: {{engSentence}} </p>
+<input name="ipaWord" value={{ipaWord}} hidden>
 <p>IPA: {{ipaWord}} </p>
+
+<button type="submit">Save Word</button>
+
+</form>
 <a href="/">Logout</a>

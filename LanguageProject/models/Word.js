@@ -10,6 +10,9 @@ const wordSchema = new Schema({
   engSentence: String,
   ipaWord: String,
   comment: String,
+  owner : [{
+    User: Schema.Types.ObjectId
+  }]
 });
 
 const Word = mongoose.model("Word", wordSchema);

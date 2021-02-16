@@ -16,8 +16,9 @@ router.get('/dashboard', (req, res) => {
 
 router.get("/word-search", (req, res, next) => {
   const {wordInput} = req.query;
-  console.log('REQQQQQQQQQQQQQQ', req.query);
-  axios.get(`https://od-api.oxforddictionaries.com/api/v2/translations/de/en/${wordInput || "pferd"}?strictMatch=false`)
+  // const defaultRandomWord = getRandomWord()
+  // console.log('REQQQQQQQQQQQQQQ', req.query);
+  axios.get(`https://od-api.oxforddictionaries.com/api/v2/translations/de/en/${wordInput || "Error"}?strictMatch=false`)
     .then(def => {
       // console.log('DEFFFFF', def.data.results[0].lexicalEntries[0]);
       // console.log('DEFFFFF', def.data.results[0].lexicalEntries[0].entries[0].senses[0].translations[0].text);
@@ -33,17 +34,29 @@ router.get("/word-search", (req, res, next) => {
     })
 });
 
-// router.get("/dashboard", (req, res) => {
-//   console.log(req.body)
-//   const {wordInput} = req.body;
-//   Word.create({wordInput}).then(()=> {
-//     res.render("/dashboard")
-//   })
-//   .catch(err => {
-//     next(err);
-//   });
-// })
+// here we will add a shuffling function
 
+//function getRandomWord()
+
+router.post("/addWord", (req, res, next) => {
+  const {searchedWord, translatedWord, engSentence, gerSentence,ipaWord} = req.body;
+
+Word.create({searchedWord, translatedWord, engSentence, gerSentence,ipaWord, 
+  //owner: req.session.id
+})
+  .then((savedWord) => {
+    console.log("saved here!",savedWord)
+    //res.redirect('/list-words')
+  }).catch(err => {
+    next(err);
+  })
+});
+
+router.get("/list-of-words", (req,res) => {
+  Word.find({owner:req.session.id}).then(words => {
+    res.render("list-words", {words})
+  }).catch(err => console.log(err))
+})
 
 module.exports = router;
 
